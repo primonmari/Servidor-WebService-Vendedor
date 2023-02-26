@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro vendedor</title>
+</head>
+<body>
+    
+    id <input type ="text" name="cod" id="cod"> <br>
+    nome <input type ="text" name="nome" id="nome"> <br>
+    almoco <input type ="text" name="almoco" id="almoco"> <br>
+    Whatsapp <input type ="text" name="Whatsapp" id="Whatsapp"> <br>
+    email <input type ="text" name="email" id="email"> <br>
+    ferias <input type ="text" name="ferias" id="ferias"> <br>
+
+    <button onclick="cadastrar_vendedor();">Cadastrar Vendedor(a)</button> <br><br>
+
+    <button onclick="deletar_vendedor();">Deletar Vendedor(a)</button> <input type ="text" name="del_id" id="del_id"> <br><br>
+
+    <button onclick="editar_vendedor();">Editar Vendedor(a)</button> 
+
+
+    <div id="demo">
+	</div>
+    <script>
+    
+    // ============  funcao deletar ================
+    function deletar_vendedor(){
+    	//XMLHttpRequest é um objeto que fornece funcionalidade ao cliente para transferir dados entre um cliente e 
+    	//um servidor. Ele fornece uma maneira fácil de recuperar dados de um URL sem ter que fazer uma atualização de página inteira.
+    	var xhttp = new XMLHttpRequest();
+    	    //quando vir resposta vai escrever na DIV
+    		//onreadystatechange contém o manipulador de eventos que é chamado quando o evento readystatechange é disparado, 
+    		//ou seja, toda vez que a propriedade readyState do XMLHttpRequest é modificada.
+    	    xhttp.onreadystatechange = function(){
+            	//readyState == 4 verifica se o estado de prontidão do servidor é igual a
+            	// 4, ou seja, se a solicitação está completa.
+    	        if (this.readyState == 4 && this.status == 200){
+                	
+					//responseText – retorna a resposta do servidor como uma string de texto.
+    	            document.getElementById("demo").innerHTML = this.responseText;
+    	        }
+    	    };
+    //quando for deletar devo informar qual numero quero deletar, quando clicar 
+    //ele pega o numero escolhido e transforma p/ essa variavel
+    var id_del = document.getElementById("del_id").value;
+    //abro a conexão e informo q o metodo é delete para o endereco + o id , seria como se digitasse na barra de url  
+    xhttp.open("DELETE", "http://02.suportelab.com.br:15010/vendedor/" + id_del, true);
+    xhttp.send();//envio o conteudo de texto
+
+}
+
+    //  ============= funcao cadastrar ===============
+    function cadastrar_vendedor(){
+        var xhttp = new XMLHttpRequest();
+        //quando vir resposta vai escrever na DIV
+        xhttp.onreadystatechange = function(){
+            if (this.readyState == 4 && this.status == 200){
+                document.getElementById("demo").innerHTML = this.responseText;
+            }
+        };
+
+    //montando o objeto para poder enviar
+    //para poder pegar os valores de dentro dos campos uso o docum.getElem.. seleciono o id que quero pegar
+    //uso o .value para pegar o valor do campo
+    var id = (document.getElementById("cod").value);
+    var nome = document.getElementById("nome").value;
+    var almoco = document.getElementById("almoco").value;
+    var Whatsapp = document.getElementById("Whatsapp").value;
+    var email = document.getElementById("email").value;
+    var ferias = document.getElementById("ferias").value;
+    //variavel vendedor que eh um objeto
+    var vendedor = {
+        id:id,
+        nome:nome,
+        almoco:almoco,
+        Whatsapp:Whatsapp,
+        email:email,
+        ferias:ferias
+    }
+    console.log(vendedor);//imprime no console
+    //transformando o objeto em texto json
+    var vend = JSON.stringify(vendedor);
+    console.log(vend);
+
+    xhttp.open("POST", "http://02.suportelab.com.br:15010/vendedor", true);
+    //Informa q o conteudo que esta sendo enviado é do tipo application/json
+    //nao estava conseguindo cadastrar novo vendedor sem o comando abaixo:
+    //informo q o conteudo que esta sendo enviado é do tipo aplication json
+    xhttp.setRequestHeader("Content-Type", "application/json");//se nao informo como application ele analisa como texto ou alguma outra coisa
+    xhttp.send(vend);//envio o conteudo de texto
+
+}   
+
+
+    // ================ funcao editar =================
+    function editar_vendedor(){
+        //XMLHttpRequest é um objeto que fornece funcionalidade ao cliente para transferir dados entre um cliente e 
+    	//um servidor. Ele fornece uma maneira fácil de recuperar dados de um URL sem ter que fazer uma atualização de página inteira.
+        var xhttp = new XMLHttpRequest();
+        //quando vir resposta vai escrever na DIV
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200){
+                //div demo
+                document.getElementById("demo").innerHTML = this.responseText;
+            }
+        };
+        //minha funcao editar vai pegar todos os dados com valores novos
+        var id = parseInt(document.getElementById("cod").value);
+        var nome = document.getElementById("nome").value;
+        var almoco = document.getElementById("almoco").value;
+        var Whatsapp = document.getElementById("Whatsapp").value;
+        var email = document.getElementById("email").value;
+        var ferias = document.getElementById("ferias").value;
+
+        //transforma em objeto
+        var vendedor = {
+            "id": id,
+            "nome": nome,
+            "almoco": almoco,
+            "Whatsapp": Whatsapp,
+            "email": email,
+            "ferias": ferias
+        }
+        console.log(vendedor);
+         //transformando o objeto em texto json
+        var vend = JSON.stringify(vendedor);
+        console.log(vend);
+        //metodo put informo o vendedor e seu id 
+        xhttp.open("PUT","http://02.suportelab.com.br:15010/vendedor/" +id, true);
+        //Informa q o conteudo que esta sendo enviado é do tipo application/json
+        //nao estava conseguindo editar novo vendedor sem o comando abaixo:
+        //informo q o conteudo que esta sendo enviado é do tipo aplication json
+        xhttp.setRequestHeader("Content-Type","application/json");
+        xhttp.send(vend);
+    }
+</script>
+</body>
+</html>
